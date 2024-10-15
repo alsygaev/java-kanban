@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Task {
+- id: int
+- description: String
+- status: Status
+}
+
+class Epic {
+- id: int
+- description: String
+- subtackId: Subtask
+- status: Status
+}
+
+class Subtask {
+- id: int
+- description: String
+- epicId: Epic
+- status: Status
+}
+
+Epic  --> "*" Subtask : содержит \nнесколько Subtask
+Task --> Epic : Переопеделяется \nв Epic при наличии Subtask
+
+enum Status {
+NEW,
+IN_PROGRESS,
+DONE
+}
+
+Task --> Status : имеет статус
+Epic --> Status : имеет статус
+Subtask --> Status : имеет статус
+
+@enduml
