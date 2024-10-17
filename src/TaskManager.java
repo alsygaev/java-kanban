@@ -123,6 +123,10 @@ public class TaskManager {
         getAllSubtasksByEpic(epicId).forEach(subtask -> deleteSubtaskById(subtask.getId()));
     }
 
+    public void deleteAllSubtasks() {
+        subtasks.clear();
+    }
+
     // Метод для обновления статуса эпика
     public void updateEpicStatus(int epicId) {
         Epic epic = epics.get(epicId);
