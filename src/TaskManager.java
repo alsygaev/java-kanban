@@ -45,7 +45,6 @@ public class TaskManager {
     public int createEpic(Epic epic) {
         int id = generatorId++;
         epic.setId(id);
-        //epics.put(id, new ArrayList<Subtask>());
         epics.put(id, epic);
         System.out.println("Epic with ID " + epic.getId() + " / name: " + epic.getName() + " /description: " + epic.getDescription() +
                 " / " + epic.getStatus() + " was created.");
@@ -83,7 +82,6 @@ public class TaskManager {
         return subtask;
 
     }
-
 
     //Get all epics
     public List<Epic> getAllEpics() {
