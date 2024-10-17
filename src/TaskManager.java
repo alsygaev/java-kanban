@@ -6,170 +6,170 @@ import java.util.Map;
 
 public class TaskManager {
 
-    private Map<Epic, List<Subtask>> epics = new HashMap<>();
-    private Map<Subtask, List<Task>> subtasks = new HashMap<>();
+    private Map<Integer, Task> tasks = new HashMap<>();
+    private Map<Integer, Subtask> subtasks = new HashMap<>();
+    private Map<Integer, Epic> epics = new HashMap<>();
 
-    // Создание Epic
-    public void createEpic(String name, String description) {
-        Epic epic = new Epic(name, description, TaskStatus.NEW);
-        epics.put(epic, new ArrayList<>());
-        System.out.println("Epic " + epic.hashCode() + " created");
+    private int generatorId = 1;
+
+    //Create Task
+    public int createTask(Task task) {
+        int id = generatorId++;
+        task.setId(id);
+        tasks.put(id, task);
+
+        System.out.println("Task with ID " + task.getId() + " / name: " + task.getName() + " / description: " + task.getDescription() +
+                " / " + task.getStatus() + " was created.");
+
+        return id;
     }
 
-    // Создание Subtask
-    public void createSubtask(Epic epic, String name, String description) {
-        if (epics.containsKey(epic)) {
-            Subtask subtask = new Subtask(name, description, TaskStatus.NEW, epic);
-            epics.get(epic).add(subtask);
-            subtasks.put(subtask, new ArrayList<>());
-            System.out.println("Subtask " + subtask.hashCode() + " created for Epic " + epic.hashCode());
+    //Create Subtask
+    public int createSubtask(int epicId, Subtask subtask) {
+        int id = generatorId++;
+        if (epics.containsKey(epicId)) {
+            subtask.setId(id);
+            subtasks.put(id, subtask);
+
+            System.out.println("Subtask with ID " + subtask.getId() + " / name: " + subtask.getName() + " / description: " + subtask.getDescription() +
+                    " in epic: " + epics.get(epicId) +
+                    " / " + subtask.getStatus() + " was created.");
+            return id;
         } else {
-            System.out.println("Epic not found");
+            System.out.println("Subtask is not created. Epic with id: " + epicId + " does not exist.");
+            return -1;
         }
     }
 
-    // Создание Task
-    public void createTask(Subtask subtask, String name, String description) {
-        if (subtasks.containsKey(subtask)) {
-            Task task = new Task(name, description, TaskStatus.NEW);
-            subtasks.get(subtask).add(task);
-            System.out.println("Task " + task.hashCode() + " created for Subtask " + subtask.hashCode());
-        } else {
-            System.out.println("Subtask not found");
-        }
+    //Create Epic
+    public int createEpic(Epic epic) {
+        int id = generatorId++;
+        epic.setId(id);
+        //epics.put(id, new ArrayList<Subtask>());
+        epics.put(id, epic);
+        System.out.println("Epic with ID " + epic.getId() + " / name: " + epic.getName() + " /description: " + epic.getDescription() +
+                " / " + epic.getStatus() + " was created.");
+
+        return id;
     }
 
-    // Метод обновления статуса Task
-    public void updateTaskStatus(Task task, TaskStatus status) {
-        for (List<Task> taskList : subtasks.values()) {
-            if (taskList.contains(task)) {
-                task.setStatus(status);
-                System.out.println("Task " + task.hashCode() + " updated to " + status);
+    //Get all tasks
+    public List<Task> getAllTasks() {
+        List<Task> taskList = new ArrayList<>();
+        tasks.values().forEach(task -> taskList.add(task));
+        return taskList;
+    }
 
-                // Обновляем статус Subtask и Epic
-                updateSubtaskStatus(getSubtaskContainingTask(task));
-                return;
+    //Get task by Id
+    public Task getTaskById(int id) {
+        return tasks.get(id);
+    }
+
+    //Get all subtasks
+    public List<Subtask> getAllSubtasksByEpic(int epicId) {
+        List<Subtask> subtaskList = new ArrayList<>();
+        subtasks.values().stream()
+                .filter(s -> s.getEpicId() == epicId)
+                .forEach(task -> subtaskList.add(task));
+        return subtaskList;
+        //subtasks.values().forEach(System.out::println);
+    }
+
+    //Get subtask by Id
+    public Subtask getSubtaskById(int subtaskId) {
+        Subtask subtask = subtasks.get(subtaskId);
+        //Epic epic = epics.get(subtask.getEpicId());
+        //updateEpic(epic.setStatus(TaskStatus.IN_PROGRESS));
+        return subtask;
+
+    }
+
+
+    //Get all epics
+    public List<Epic> getAllEpics() {
+        List<Epic> epicList = new ArrayList<>();
+        epics.values().forEach(epic -> epicList.add(epic));
+        return epicList;
+    }
+
+    //Get epic by id
+    public Epic getAllEpicById(int id) {
+        return epics.get(id);
+    }
+
+    public void updateTask(Task task) {
+        tasks.put(task.getId(), task);
+    }
+
+    public void updateEpic(Epic epic) {
+        epics.put(epic.getId(), epic);
+    }
+
+    public void updateSubtask(Subtask subtask) {
+        // Update subtask
+        subtasks.put(subtask.getId(), subtask);
+
+        // Get epicId which has subtasks
+        int epicId = subtask.getEpicId();
+
+        // Get subtasks list by epicId
+        List<Subtask> subtaskList = getAllSubtasksByEpic(epicId);
+
+        // Current status
+        TaskStatus epicStatus = TaskStatus.NEW;
+
+        boolean hasInProgress = false;
+
+        for (Subtask s : subtaskList) {
+            if (s.getStatus() == TaskStatus.IN_PROGRESS) {
+                hasInProgress = true;
+                break;
+            }
+            if (s.getStatus() == TaskStatus.DONE) {
+                epicStatus = TaskStatus.DONE;
+            } else {
+                epicStatus = TaskStatus.IN_PROGRESS;
             }
         }
-        System.out.println("Task not found");
-    }
 
-    // Метод обновления статуса Subtask
-    private void updateSubtaskStatus(Subtask subtask) {
-        List<Task> taskList = subtasks.get(subtask);
-        boolean allTasksDone = taskList.stream().allMatch(task -> task.getStatus() == TaskStatus.DONE);
-        boolean anyTaskInProgress = taskList.stream().anyMatch(task -> task.getStatus() == TaskStatus.IN_PROGRESS);
-
-        if (allTasksDone) {
-            subtask.setStatus(TaskStatus.DONE);
-        } else if (anyTaskInProgress) {
-            subtask.setStatus(TaskStatus.IN_PROGRESS);
-        } else {
-            subtask.setStatus(TaskStatus.NEW);
+        // Update epic
+        if (hasInProgress) {
+            epicStatus = TaskStatus.IN_PROGRESS;
+        } else if (epicStatus == TaskStatus.NEW && subtaskList.isEmpty()) {
+            epicStatus = TaskStatus.NEW;
         }
 
-        // Обновляем статус Epic
-        updateEpicStatus(subtask.getEpic());
-    }
-
-    // Метод обновления статуса Epic
-    private void updateEpicStatus(Epic epic) {
-        List<Subtask> subtaskList = epics.get(epic);
-        boolean allSubtasksDone = subtaskList.stream().allMatch(subtask -> subtask.getStatus() == TaskStatus.DONE);
-        boolean anySubtasksInProgress = subtaskList.stream().anyMatch(subtask -> subtask.getStatus() == TaskStatus.IN_PROGRESS);
-
-        if (allSubtasksDone) {
-            epic.setStatus(TaskStatus.DONE);
-        } else if (anySubtasksInProgress) {
-            epic.setStatus(TaskStatus.IN_PROGRESS);
-        } else {
-            epic.setStatus(TaskStatus.NEW);
+        Epic epic = getAllEpicById(epicId);
+        if (epic != null) {
+            epic.setStatus(epicStatus);
+            epics.put(epicId, epic);
         }
     }
 
-    // Метод поиска Subtask, содержащего Task
-    private Subtask getSubtaskContainingTask(Task task) {
-        return subtasks.entrySet().stream()
-                .filter(entry -> entry.getValue().contains(task))
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null);
+    public void deleteTaskById(int id) {
+        tasks.remove(id);
     }
 
-    // Получение всех Epic, Subtask и Task
-    public void getAllEpics() {
-        if (!epics.isEmpty()) {
-            for (Epic epic : epics.keySet()) {
-                System.out.println("EpicId: " + epic.hashCode() + "| Epic: " + epic.getName() + " Status: " + epic.getStatus());
-                List<Subtask> subtaskList = epics.get(epic);
-                for (Subtask subtask : subtaskList) {
-                    System.out.println("  Subtask: " + subtask.getName() + " Status: " + subtask.getStatus());
-                    List<Task> taskList = subtasks.get(subtask);
-                    for (Task task : taskList) {
-                        System.out.println("    Task: " + task.getName() + " Status: " + task.getStatus());
-                    }
-                }
-            }
-        } else {
-            System.out.println("No Epic found");
-        }
+    public void deleteEpicById(int id) {
+        epics.remove(id);
+        subtasks.remove(getAllSubtasksByEpic(id));
     }
 
-    // Поиск Epic по хэш-коду
-    public Epic findEpicByHashCode(Object hashCode) {
-        if (hashCode instanceof Integer) {
-            int code = (Integer) hashCode; // Приведение Object к int
-            return epics.keySet().stream()
-                    .filter(epic -> epic.hashCode() == code)
-                    .findFirst()
-                    .orElse(null);
-        }
-        return null; // Возвращаем null, если hashCode не является Integer
+    public void deleteSubtaskById(int id) {
+        subtasks.remove(id);
     }
 
-    // Поиск Subtask по HashCode
-    public Subtask findSubtaskByHashCode(Object hashCode) {
-        if (hashCode instanceof Integer) {
-            int code = (Integer) hashCode;
-            return epics.values().stream()
-                    .flatMap(List::stream) // Преобразуем List<Subtask> в Stream<Subtask>
-                    .filter(subtask -> subtask.hashCode() == code)
-                    .findFirst()
-                    .orElse(null);
-        }
-        return null;
+    public void deleteAllTasks() {
+        tasks.clear();
     }
 
-    // Поиск Task по HashCode
-    public Task findTaskByHashCode(Object hashCode) {
-        if (hashCode instanceof Integer) {
-            int code = (Integer) hashCode;
-            return subtasks.values().stream()
-                    .flatMap(List::stream) // Преобразуем List<Task> в Stream<Task>
-                    .filter(task -> task.hashCode() == code)
-                    .findFirst()
-                    .orElse(null);
-        }
-        return null;
+    void deleteAllEpics() {
+        epics.clear();
     }
 
-    //Удаление Epic
-    public void deleteEpic(Epic epic) {
-        epics.remove(epic);
-        subtasks.entrySet().removeIf(entry -> entry.getKey().getEpic() == epic);
-        subtasks.values().removeIf(taskList -> taskList.contains(epic));
-    }
 
-    //Удаление Task
-    public void deleteTask(Task task) {
-        for (Map.Entry<Subtask, List<Task>> entry : subtasks.entrySet()) {
-            List<Task> taskList = entry.getValue();
-            if (taskList.contains(task)) {
-                taskList.remove(task);
-                System.out.println("Task " + task.getName() + " удален.");
-                return;
-            }
-        }
-        System.out.println("Task не найден.");
-    }
+
+
+
+
 }

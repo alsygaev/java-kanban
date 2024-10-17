@@ -3,12 +3,14 @@
 
 class Task {
 - id: int
+- name: String
 - description: String
 - status: Status
 }
 
 class Epic {
 - id: int
+- name: String
 - description: String
 - subtackId: Subtask
 - status: Status
@@ -16,14 +18,15 @@ class Epic {
 
 class Subtask {
 - id: int
+- name: String
 - description: String
 - epicId: Epic
 - status: Status
 }
 
 Epic  --> "*" Subtask : содержит \nнесколько Subtask
-Task --> Epic : Переопеделяется \nв Epic при наличии Subtask
-
+Task --> Epic : Базовый класс для \nв Epic и Subtask
+Task --> Subtask : Базовый класс для \nв Epic и Subtask
 enum Status {
 NEW,
 IN_PROGRESS,
