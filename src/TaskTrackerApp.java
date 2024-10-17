@@ -6,45 +6,59 @@ public class TaskTrackerApp {
     public static void main(String[] args) {
 
         TaskManager taskManager = new TaskManager();
-        // Создаем задачу
-        System.out.println("\n");
-        System.out.println("// Создаем задачу");
-
+        // Создаем Task
         Task task1 = new Task("this is Task", "Buy milk");
         Task task2 = new Task("this is Task", "Buy bread");
         Task task3 = new Task("this is Task", "Buy vegetables");
 
-        // Добавляем задачу в TaskManager
+        // Добавляем таски в Tasks
         System.out.println("\n");
-        System.out.println("// Добавляем задачу в TaskManager");
+        System.out.println("// Добавляем задачу в Tasks");
 
         int task1Id = taskManager.createTask(task1);
-        System.out.println("Created new task: " + task1Id);
+        System.out.println("Task with ID: " + task1.getId() + " / name: " + task1.getName() + " / description: " + task1.getDescription() +
+                " / " + task1.getStatus() + " was created.");
+
         int task2Id = taskManager.createTask(task2);
-        System.out.println("Created new task: " + task2Id);
+        System.out.println("Task with ID: " + task2.getId() + " / name: " + task2.getName() + " / description: " + task2.getDescription() +
+                " / " + task2.getStatus() + " was created.");
+
         int task3Id = taskManager.createTask(task3);
-        System.out.println("Created new task: " + task3Id);
-
-        Subtask subtask = new Subtask("Check subtask without Epic", "Subtask_1", 2 );
-        taskManager.createSubtask(2, subtask);
-
-        Epic epic = new Epic("This is Epic", "Курс Java");
-
-        int epicId = taskManager.createEpic(epic);
-        System.out.println("Created new epic: " + epicId);
-
-        Subtask subtask1 = new Subtask("Check subtask with Epic", "Subtask_1", 5 );
-        taskManager.createSubtask(epicId, subtask1);
-        Subtask subtask2 = new Subtask("Check subtask with Epic", "Subtask_2", 5 );
-        taskManager.createSubtask(epicId, subtask2);
-        Subtask subtask3 = new Subtask("Check subtask with Epic", "Subtask_3", 5 );
-        taskManager.createSubtask(epicId, subtask3);
+        System.out.println("Task with ID: " + task3.getId() + " / name: " + task3.getName() + " / description: " + task3.getDescription() +
+                " / " + task3.getStatus() + " was created.");
 
         //Просмотр всех Тасков из Tasks
         System.out.println("\n");
         System.out.println("//Просмотр всех Тасков из Tasks");
 
-        taskManager.getAllTasks();
+        taskManager.getAllTasks().stream().forEach(System.out::println);
+
+        //Создание Epic и Subtask
+        Epic epic = new Epic("This is Epic", "Курс Java");
+
+        int epicId = taskManager.createEpic(epic);
+        System.out.println("\n");
+        System.out.println("Created new epic: " + epicId + " /name: " + epic.getName() + " / description: " + epic.getDescription() +
+                " / " + epic.getStatus() + " was created.");
+
+        Subtask subtask1 = new Subtask("Check subtask with Epic", "Subtask_1", epicId );
+        taskManager.createSubtask(subtask1);
+        Subtask subtask2 = new Subtask("Check subtask with Epic", "Subtask_2", epicId );
+        taskManager.createSubtask(subtask2);
+        Subtask subtask3 = new Subtask("Check subtask with Epic", "Subtask_3", TaskStatus.IN_PROGRESS, epicId );
+        taskManager.createSubtask(subtask3);
+
+        //Просмотр всех Subtask из Epic
+        System.out.println("\n");
+        System.out.println("//Просмотр всех Subtask из Epics");
+
+        System.out.println("Epics:");
+        for (Task e : taskManager.getAllEpics()) {
+            System.out.println(e);
+            for (Task t : taskManager.getAllSubtasksByEpic(e.getId())) {
+                System.out.println("--> " + t);
+            }
+        }
 
         //Просмотр всех Эпиков из Epics
         System.out.println("\n");
@@ -63,43 +77,51 @@ public class TaskTrackerApp {
         System.out.println("//Найти эпик по ID");
 
         int id = taskManager.getAllEpics().stream().findAny().get().getId();
-        System.out.println(taskManager.getAllEpicById(id));
+        System.out.println(taskManager.getEpicById(id));
 
         //Обновление таска
         System.out.println("\n");
-        System.out.println("//Обновление статуса таска IN_PROGRESS -> DONE");
+        System.out.println("//Обновление статуса таска NEW -> IN_PROGRESS -> DONE");
 
         int taskId = taskManager.getAllTasks().stream().findAny().get().getId();
         Task task = taskManager.getTaskById(taskId);
+        task.setStatus(TaskStatus.IN_PROGRESS);
+        taskManager.updateTask(task);
+        System.out.println("CHANGE STATUS: NEW -> IN_PROGRESS");
+        System.out.println("Tasks:");
+        for (Task t : taskManager.getAllTasks()) {
+            System.out.println(t);
+        }
         task.setStatus(TaskStatus.DONE);
         taskManager.updateTask(task);
-        System.out.println("CHANGE STATUS: IN_PROGRESS->DONE");
-        System.out.println("Задачи:");
+        System.out.println("CHANGE STATUS: IN_PROGRESS -> DONE");
+        System.out.println("Tasks:");
         for (Task t : taskManager.getAllTasks()) {
             System.out.println(t);
         }
 
         //Обновление статуса сабтаска
         System.out.println("\n");
-        System.out.println("//Обновление статуса сабтаска и эпика IN_PROGRESS");
+        System.out.println("//Обновление статуса subtask и epic IN_PROGRESS -> NEW");
 
         int epicIdForUpdate = taskManager.getAllEpics().stream().findAny().get().getId();
-        System.out.println(epicIdForUpdate);
-        int subtaskId = taskManager.getAllSubtasksByEpic(epicIdForUpdate).stream().findAny().get().getId();
-        System.out.println(subtaskId);
-        Subtask subtaskForUpdate = taskManager.getSubtaskById(subtaskId);
-        subtaskForUpdate.setStatus(TaskStatus.IN_PROGRESS);
-        taskManager.updateSubtask(subtaskForUpdate);
 
-        System.out.println("Epic with ID: " + epicIdForUpdate + " has NEW STATUS: " +
-                taskManager.getAllEpicById(epicIdForUpdate).getStatus());
+        Subtask subtaskForUpdate1 = taskManager.getSubtaskById(5);
+        subtaskForUpdate1.setStatus(TaskStatus.NEW);
+        Subtask subtaskForUpdate2 = taskManager.getSubtaskById(7);
+        subtaskForUpdate2.setStatus(TaskStatus.NEW);
 
-        System.out.println("CHANGE STATUS: IN_PROGRESS->DONE");
+        taskManager.updateSubtask(subtaskForUpdate1);
+        taskManager.updateSubtask(subtaskForUpdate2);
 
-        System.out.println("Задачи:");
+        System.out.println("Subtasks:");
         for (Task t : taskManager.getAllSubtasksByEpic(epicIdForUpdate)) {
             System.out.println(t);
         }
+
+        System.out.println("Epic with ID: " + epicIdForUpdate + " has NEW STATUS: " +
+                taskManager.getEpicById(epicIdForUpdate).getStatus());
+
 
         //Обновление наименования/описания сабтаска
         System.out.println("\n");
@@ -108,9 +130,9 @@ public class TaskTrackerApp {
         int epicIdForUpdateNameSubtask = taskManager.getAllEpics().stream().findAny().get().getId();
         int subtaskIdForUpdateName = taskManager.getAllSubtasksByEpic(epicIdForUpdateNameSubtask).stream().findAny().get().getId();
 
-        Subtask subtaskForUpdateName = taskManager.getSubtaskById(subtaskId);
-        subtaskForUpdate.setName("Измененное наименование сабтаска");
-        subtaskForUpdate.setDescription("Измененное описание сабтаска");
+        Subtask subtaskForUpdateName = taskManager.getSubtaskById(7);
+        subtaskForUpdateName.setName("Измененное наименование сабтаска");
+        subtaskForUpdateName.setDescription("Измененное описание сабтаска");
 
         taskManager.updateSubtask(subtaskForUpdateName);
 
@@ -128,7 +150,7 @@ public class TaskTrackerApp {
         System.out.println("\n");
         System.out.println("//Завершение эпика");
 
-        int epicIdForDone = 5;
+        int epicIdForDone = 4;
 
         List<Subtask> subtaskIdForDone = taskManager.getAllSubtasksByEpic(epicIdForDone);
 
@@ -138,7 +160,7 @@ public class TaskTrackerApp {
         }
 
         System.out.println("Epic with ID: " + epicIdForUpdate + " has NEW STATUS: " +
-                taskManager.getAllEpicById(epicIdForUpdate).getStatus());
+                taskManager.getEpicById(epicIdForUpdate).getStatus());
 
         System.out.println("CHANGE STATUS: IN_PROGRESS->DONE");
 
@@ -190,12 +212,19 @@ public class TaskTrackerApp {
         System.out.println("//Удаление всех тасков по эпику");
 
         int epicIdForDelete = taskManager.getAllEpics().stream().findAny().get().getId();
-        taskManager.deleteEpicById(epicIdForDelete);
-        System.out.println("Epic with ID: " + epicIdForDelete + " and all subtasks have DELETED");
+        taskManager.deleteAllSubtasksByEpic(epicIdForDelete);
+        System.out.println("All subtasks have DELETED by Epic with ID: " + epicIdForDelete);
 
         if (taskManager.getAllEpics().isEmpty()) {
             System.out.println("No epic found");
         }
+
+        //Удаление всех Epic
+        System.out.println("\n");
+        System.out.println("//Удаление всех Epic");
+
+        taskManager.deleteAllEpics();
+        System.out.println("All epics are DELETED");
     }
 }
 
