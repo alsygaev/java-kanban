@@ -128,10 +128,11 @@ public class TaskManager {
 
     public void deleteAllSubtasks() {
         subtasks.clear();
+        updateAllEpicStatusToNew();
     }
 
     // Метод для обновления статуса эпика
-    public void updateEpicStatus(int epicId) {
+    private void updateEpicStatus(int epicId) {
         Epic epic = epics.get(epicId);
         if (epic == null) {
             return;
@@ -146,6 +147,7 @@ public class TaskManager {
         for (Subtask s : subtaskList) {
             if (s.getStatus() == TaskStatus.IN_PROGRESS) {
                 hasInProgress = true;
+                break;
             }
             if (s.getStatus() == TaskStatus.NEW) {
                 hasNew = true;
@@ -161,6 +163,11 @@ public class TaskManager {
         } else if (hasNew) {
             epic.setStatus(TaskStatus.NEW);
         }
+    }
+
+    // Метод для обновления статуса эпика
+    private void updateAllEpicStatusToNew() {
+        epics.values().stream().forEach(task -> task.setStatus(TaskStatus.NEW));
     }
 
 }
