@@ -71,9 +71,7 @@ public class TaskManager {
 
     //Get all epics
     public List<Epic> getAllEpics() {
-        List<Epic> epicList = new ArrayList<>();
-        epics.values().forEach(epic -> epicList.add(epic));
-        return epicList;
+        return new ArrayList<>(epics.values());
     }
 
     //Get epic by id
@@ -107,8 +105,12 @@ public class TaskManager {
 
     //добавить обновление статуса эпика
     public void deleteSubtaskById(int id) {
-        updateEpicStatus(subtasks.get(id).getEpicId());
-        subtasks.remove(id);
+        Subtask subtask = subtasks.get(id);
+        if (subtask != null) {
+            int epicId = subtask.getEpicId();
+            subtasks.remove(id);
+            updateEpicStatus(epicId);
+        }
     }
 
     public void deleteAllTasks() {
@@ -117,6 +119,7 @@ public class TaskManager {
 
     public void deleteAllEpics() {
         epics.clear();
+        tasks.clear();
     }
 
     public void deleteAllSubtasksByEpic(int epicId) {
@@ -159,9 +162,5 @@ public class TaskManager {
             epic.setStatus(TaskStatus.NEW);
         }
     }
-
-
-
-
 
 }
