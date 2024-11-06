@@ -5,7 +5,8 @@ import java.util.stream.Collectors;
 public class TaskTrackerApp {
     public static void main(String[] args) {
 
-        TaskManager taskManager = new TaskManager();
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+
         // Создаем Task
         Task task1 = new Task("this is Task", "Buy milk");
         Task task2 = new Task("this is Task", "Buy bread");
@@ -225,6 +226,46 @@ public class TaskTrackerApp {
 
         taskManager.deleteAllEpics();
         System.out.println("All epics are DELETED");
+
+        //Get tasks history
+        System.out.println("\n");
+        System.out.println("//Получение истории");
+        taskManager.getHistory().stream().forEach(t -> System.out.println(t.getName() + " / " +
+                t.getDescription() + " / " + t.getStatus()));
+
+        System.out.println("\n");
+        System.out.println("//Получение данных by printAllTasks");
+
+        printAllTasks(taskManager);
+
+
+    }
+
+    private static void printAllTasks(TaskManager manager) {
+
+        System.out.println("Задачи:");
+        for (Task task : manager.getAllTasks()) {
+            System.out.println(task);
+        }
+
+        System.out.println("Эпики:");
+        for (Task epic : manager.getAllEpics()) {
+            System.out.println(epic);
+
+            for (Task task : manager.getAllSubtasksByEpic(epic.getId())) {
+                System.out.println("--> " + task);
+            }
+        }
+
+        System.out.println("Подзадачи:");
+        for (Subtask subtask : manager.getAllSubtasks()) {
+            System.out.println(subtask);
+        }
+
+        System.out.println("История:");
+        for (Task task : manager.getHistory()) {
+            System.out.println(task);
+        }
     }
 }
 
