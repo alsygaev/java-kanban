@@ -5,7 +5,6 @@ import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager, HistoryManager {
 
-    //private List<Task> tasksHistory = new ArrayList<>();
     private InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
     private Map<Integer, Task> tasks = new HashMap<>();
