@@ -5,7 +5,8 @@ import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager, HistoryManager {
 
-    private List<Task> tasksHistory = new ArrayList<>();
+    //private List<Task> tasksHistory = new ArrayList<>();
+    private InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
     private Map<Integer, Task> tasks = new HashMap<>();
     private Map<Integer, Subtask> subtasks = new HashMap<>();
@@ -57,7 +58,7 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
     @Override
     public Task getTaskById(int id) {
 
-        addToHistory(tasks.get(id));
+        historyManager.addToHistory(tasks.get(id));
 
         return tasks.get(id);
     }
@@ -75,7 +76,9 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
     //Get all epics
     @Override
     public List<Subtask> getAllSubtasks() {
+
         return new ArrayList<>(subtasks.values());
+
     }
 
     //Get subtask by Id
@@ -83,7 +86,7 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
     public Subtask getSubtaskById(int subtaskId) {
         Subtask subtask = subtasks.get(subtaskId);
 
-        addToHistory(subtask);
+        historyManager.addToHistory(subtask);
 
         return subtask;
 
@@ -99,7 +102,7 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
     @Override
     public Epic getEpicById(int id) {
 
-        addToHistory(epics.get(id));
+        historyManager.addToHistory(epics.get(id));
 
         return epics.get(id);
     }
@@ -166,6 +169,11 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
         updateAllEpicStatusToNew();
     }
 
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
+    }
+
     // Метод для обновления статуса эпика
     private void updateEpicStatus(int epicId) {
         Epic epic = epics.get(epicId);
@@ -208,15 +216,6 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
 
     @Override
     public void addToHistory(Task task) {
-        if (tasksHistory.size() == 10) {
-            tasksHistory.remove(0);
-        } else {
-            tasksHistory.add(task);
-        }
-    }
-
-    @Override
-    public ArrayList<Task> getHistory() {
-        return new ArrayList<>(tasksHistory);
+        historyManager.addToHistory(task);
     }
 }
