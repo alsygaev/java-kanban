@@ -133,6 +133,7 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
     @Override
     public void deleteEpicById(int id) {
         // Удаляем подзадачи эпика
+        getAllSubtasksByEpic(id).forEach(subtask -> historyManager.removeFromHistory(subtask.getEpicId()));
         getAllSubtasksByEpic(id).forEach(subtask -> deleteSubtaskById(subtask.getId()));
 
         // Удаляем эпик
@@ -153,49 +154,32 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
 
     @Override
     public void deleteAllTasks() {
+        List<Task> allTasks = getAllTasks();
+        allTasks.forEach(task -> historyManager.removeFromHistory(task.getId()));
         tasks.clear();
 
-        historyManager.getHistory()
-                .stream()
-                .filter(task -> task instanceof Task)
-                .forEach(task -> historyManager.removeFromHistory(task.getId()));
     }
 
     @Override
     public void deleteAllEpics() {
+        List<Epic> allEpics = getAllEpics();
+        allEpics.forEach(epic -> historyManager.removeFromHistory(epic.getId()));
         epics.clear();
-        tasks.clear();
 
-        historyManager.getHistory()
-                .stream()
-                .filter(epic -> epic instanceof Epic || epic instanceof Subtask)
-                .forEach(epic -> historyManager.removeFromHistory(epic.getId()));
     }
 
     @Override
     public void deleteAllSubtasksByEpic(int epicId) {
+        getAllSubtasksByEpic(epicId).forEach(subtask -> historyManager.removeFromHistory(subtask.getId()));
         getAllSubtasksByEpic(epicId).forEach(subtask -> deleteSubtaskById(subtask.getId()));
-
-        // Удаление всех подзадач по эпику из истории
-        historyManager.getHistory().stream()
-                .filter(task -> task instanceof Subtask && ((Subtask) task).getEpicId() == epicId)
-                .map(Task::getId)
-                .collect(Collectors.toList()) // Собираем в отдельный список для избежания ConcurrentModificationException
-                .forEach(historyManager::removeFromHistory);
-
-
         updateEpicStatus(epicId);
     }
 
     @Override
     public void deleteAllSubtasks() {
+        List<Subtask> allSubtasks = getAllSubtasks();
+        allSubtasks.forEach(task -> historyManager.removeFromHistory(task.getId()));
         subtasks.clear();
-
-        historyManager.getHistory()
-                .stream()
-                .filter(task -> task instanceof Subtask) // Только подзадачи
-                .forEach(task -> historyManager.removeFromHistory(task.getId()));
-
         updateAllEpicStatusToNew();
     }
 
