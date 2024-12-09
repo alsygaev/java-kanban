@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,15 +9,15 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
 
     private InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
-    private Map<Integer, Task> tasks = new HashMap<>();
-    private Map<Integer, Subtask> subtasks = new HashMap<>();
-    private Map<Integer, Epic> epics = new HashMap<>();
+    Map<Integer, Task> tasks = new HashMap<>();
+    Map<Integer, Subtask> subtasks = new HashMap<>();
+    Map<Integer, Epic> epics = new HashMap<>();
 
     private int generatorId = 1;
 
     //Create Task
     @Override
-    public int createTask(Task task) {
+    public int createTask(Task task) throws IOException {
         int id = generatorId++;
         task.setId(id);
         tasks.put(id, task);
@@ -25,7 +26,7 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
 
     //Create Subtask
     @Override
-    public int createSubtask(Subtask subtask) {
+    public int createSubtask(Subtask subtask) throws IOException {
         int id = generatorId++;
         if (epics.containsKey(subtask.getEpicId())) {
             subtask.setId(id);
@@ -39,7 +40,7 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
 
     //Create Epic
     @Override
-    public int createEpic(Epic epic) {
+    public int createEpic(Epic epic) throws IOException {
         int id = generatorId++;
         epic.setId(id);
         epics.put(id, epic);

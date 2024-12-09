@@ -1,15 +1,16 @@
+import java.io.IOException;
 import java.util.List;
 
 public interface TaskManager {
 
     // Create Task
-    int createTask(Task task);
+    int createTask(Task task) throws IOException;
 
     // Create Subtask
-    int createSubtask(Subtask subtask);
+    int createSubtask(Subtask subtask) throws IOException;
 
     // Create Epic
-    int createEpic(Epic epic);
+    int createEpic(Epic epic) throws IOException;
 
     // Get all tasks
     List<Task> getAllTasks();
