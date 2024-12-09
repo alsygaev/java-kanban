@@ -1,6 +1,7 @@
 
 public class Subtask extends Task {
     private int epicId;
+    private TaskType taskType = TaskType.SUBTASK;
 
     public Subtask() {
         this.status = TaskStatus.NEW;
@@ -64,5 +65,10 @@ public class Subtask extends Task {
                 ", status=" + status +
                 ", epicId=" + epicId +
                 '}';
+    }
+
+    @Override
+    public TaskType getType() {
+        return TaskType.SUBTASK;
     }
 }

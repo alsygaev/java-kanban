@@ -139,4 +139,62 @@ class InMemoryTaskManagerTest {
         assertEquals("History Task 1", history.get(0).getName());
         assertEquals("History Task 2", history.get(1).getName());
     }
+
+    @Test
+    void getHistoryAfterCreatingTasksTest() {
+        Task task1 = new Task("Task 1", "TaskDescription 1");
+        task1.setId(1);
+        Task task2 = new Task("Task 2", "TaskDescription 2");
+        task2.setId(2);
+
+        taskManager.createTask(task1);
+        taskManager.createTask(task2);
+
+        // Запросим задачи, чтобы они добавились в историю
+        taskManager.getTaskById(task1.getId());
+        taskManager.getTaskById(task2.getId());
+
+        List<Task> history = taskManager.getHistory();
+        assertEquals(2, history.size(), "История должна содержать 2 задачи.");
+        assertEquals(task1, history.get(0), "Первая задача должна быть Task 1.");
+        assertEquals(task2, history.get(1), "Вторая задача должна быть Task 2.");
+    }
+
+    @Test
+    void deleteTaskShouldRemoveFromHistoryTest() {
+        Task task1 = new Task("Task 1", "TaskDescription 1");
+        task1.setId(1);
+        Task task2 = new Task("Task 2", "TaskDescription 2");
+        task2.setId(2);
+
+        int task1Id = taskManager.createTask(task1);
+        int task2Id = taskManager.createTask(task2);
+
+        taskManager.getTaskById(task1Id);
+        taskManager.getTaskById(task2Id);
+
+        taskManager.deleteTaskById(task1Id);
+
+        List<Task> history = taskManager.getHistory();
+        assertEquals(1, history.size(), "История должна содержать 1 задачу после удаления Task 1.");
+        assertEquals(task2, history.get(0), "Единственная задача в истории должна быть Task 2.");
+    }
+
+    @Test
+    void deleteSubtaskShouldUpdateEpicTest() {
+        Epic epic = new Epic("Epic", "EpicDescription");
+        int epicId = taskManager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Subtask", "SubtaskDescription", epicId);
+        int subtaskId = taskManager.createSubtask(subtask);
+
+        taskManager.deleteSubtaskById(subtaskId);
+
+        List<Subtask> subtasks = taskManager.getAllSubtasksByEpic(epicId);
+        assertTrue(subtasks.isEmpty(), "Все подзадачи эпика должны быть удалены.");
+
+        Epic updatedEpic = taskManager.getEpicById(epicId);
+        assertNotNull(updatedEpic, "Эпик не должен быть удалён.");
+        assertTrue(taskManager.getAllSubtasksByEpic(epicId).isEmpty(), "В эпике не должно оставаться подзадач.");
+    }
 }

@@ -6,6 +6,7 @@ public class Task {
     protected String name;
     protected String description;
     protected TaskStatus status;
+    protected TaskType type = TaskType.TASK;
 
     public Task() {
     }
@@ -47,6 +48,8 @@ public class Task {
     public TaskStatus getStatus() {
         return status;
     }
+
+    public TaskType getType() { return TaskType.TASK; }
 
     @Override
     public String toString() {
