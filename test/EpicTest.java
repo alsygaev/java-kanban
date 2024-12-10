@@ -1,3 +1,5 @@
+import tasks.Epic;
+import tasks.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +36,7 @@ class EpicTest {
 
     @org.junit.jupiter.api.Test
     void testToString() {
-        String str = "Epic{id=0', name='this is epic', description='epic description', status=NEW}";
+        String str = "Tasks.Epic{id=0', name='this is epic', description='epic description', status=NEW}";
         assertEquals(str, epic.toString());
     }
 }

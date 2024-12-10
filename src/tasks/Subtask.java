@@ -1,6 +1,8 @@
+package tasks;
 
 public class Subtask extends Task {
     private int epicId;
+    private TaskType taskType = TaskType.SUBTASK;
 
     public Subtask() {
         this.status = TaskStatus.NEW;
@@ -57,12 +59,17 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{" +
+        return "Tasks.Subtask{" +
                 "id=" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 ", epicId=" + epicId +
                 '}';
+    }
+
+    @Override
+    public TaskType getType() {
+        return TaskType.SUBTASK;
     }
 }

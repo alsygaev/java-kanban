@@ -1,14 +1,20 @@
+package managers;
+
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
+
 import java.util.List;
 
 public interface TaskManager {
 
-    // Create Task
+    // Create Tasks.Task
     int createTask(Task task);
 
-    // Create Subtask
+    // Create Tasks.Subtask
     int createSubtask(Subtask subtask);
 
-    // Create Epic
+    // Create Tasks.Epic
     int createEpic(Epic epic);
 
     // Get all tasks

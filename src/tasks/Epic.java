@@ -1,6 +1,7 @@
-import java.util.List;
+package tasks;
 
 public class Epic extends Task {
+    public TaskType taskType = TaskType.EPIC;
 
     public Epic() {
         this.status = TaskStatus.NEW;
@@ -32,11 +33,16 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" +
+        return "Tasks.Epic{" +
                 "id=" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 '}';
+    }
+
+    @Override
+    public TaskType getType() {
+        return TaskType.EPIC;
     }
 }
