@@ -1,4 +1,4 @@
-package Tasks;
+package tasks;
 
 public class Epic extends Task {
     public TaskType taskType = TaskType.EPIC;

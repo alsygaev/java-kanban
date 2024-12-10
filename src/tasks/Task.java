@@ -1,4 +1,4 @@
-package Tasks;//Базовый класс для Tasks.Subtask и Tasks.Epic.
+package tasks;//Базовый класс для Tasks.Subtask и Tasks.Epic.
 //Существует сам по себе.
 
 public class Task {

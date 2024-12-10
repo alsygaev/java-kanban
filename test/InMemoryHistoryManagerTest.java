@@ -1,6 +1,6 @@
-import Managers.InMemoryHistoryManager;
-import Managers.InMemoryTaskManager;
-import Tasks.Task;
+import managers.InMemoryHistoryManager;
+import managers.InMemoryTaskManager;
+import tasks.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
