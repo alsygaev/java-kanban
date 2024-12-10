@@ -1,2 +1,0 @@
-id,type,name,status,description,epic
-1,TASK,tasks.Task 1,NEW,Description tasks.Task 1,2,TASK,tasks.Task 2,NEW,Description tasks.Task 2,4,SUBTASK,tasks.Subtask 1,NEW,Description tasks.Subtask 1,35,SUBTASK,tasks.Subtask 2,NEW,Description tasks.Subtask 2,33,EPIC,tasks.Epic 1,NEW,Description tasks.Epic 1,
