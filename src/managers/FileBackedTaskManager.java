@@ -113,70 +113,49 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
         int maxId = 0;
-
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-            reader.readLine(); // Пропускаем заголовок
             while ((line = reader.readLine()) != null) {
-                if (!line.isBlank()) {
-                    Task task = fromString(line);
-                    maxId = Math.max(maxId, task.getId());
-
-                    if (task instanceof Subtask) {
-                        manager.createSubtask((Subtask) task);
-                    } else if (task instanceof Epic) {
-                        manager.createEpic((Epic) task);
-                    } else {
-                        manager.createTask(task);
-                    }
+                if (line.startsWith("id,type")) continue; // Пропускаем заголовок
+                Task task = fromString(line);
+                maxId = Math.max(maxId, task.getId());
+                switch (task.getType()) {
+                    case TASK -> manager.tasks.put(task.getId(), task);
+                    case EPIC -> manager.epics.put(task.getId(), (Epic) task);
+                    case SUBTASK -> manager.subtasks.put(task.getId(), (Subtask) task);
                 }
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки из файла: ", e);
         }
-
         manager.generatorId = maxId + 1;
         return manager;
     }
 
+
+
     public String toString(Task task) {
-        String id;
-        String type;
-        String name;
-        String status;
-        String description;
-        String epic = "";
-        id = String.valueOf(task.getId());
-
-        if (task.getType().equals(TaskType.EPIC)) {
-            type = String.valueOf(TaskType.EPIC);
-        } else if (task.getType().equals(TaskType.SUBTASK)) {
-            type = String.valueOf(TaskType.SUBTASK);
-        } else {
-            type = String.valueOf(TaskType.TASK);
+        StringBuilder result = new StringBuilder();
+        result.append(task.getId()).append(",")
+                .append(task.getType()).append(",")
+                .append(task.getName()).append(",")
+                .append(task.getStatus()).append(",")
+                .append(task.getDescription());
+        if (task instanceof Subtask) {
+            result.append(",").append(((Subtask) task).getEpicId());
         }
-        name = task.getName();
-
-        status = task.getStatus().toString();
-
-        description = task.getDescription();
-
-        if (task.getType().equals(TaskType.SUBTASK)) {
-            epic = String.valueOf(((Subtask) task).getEpicId());
-        }
-
-        return id + "," + type + "," + name + "," + status + "," + description + "," + epic;
+        return result.toString();
     }
 
     public static Task fromString(String value) {
         String[] fields = value.split(",");
-        Task task;
         int id = Integer.parseInt(fields[0]);
         TaskType type = TaskType.valueOf(fields[1]);
         String name = fields[2];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
 
+        Task task;
         if (TaskType.EPIC.equals(type)) {
             task = new Epic(name, description);
         } else if (TaskType.SUBTASK.equals(type)) {

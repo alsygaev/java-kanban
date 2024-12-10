@@ -12,7 +12,7 @@ class FileBackedTaskManagerTest {
 
     @Test
     void testSaveAndLoadEmptyFile() throws IOException {
-        File tempFile = File.createTempFile("testEmpty", ".csv");
+        File tempFile = File.createTempFile("tasks1", ".txt");
         tempFile.deleteOnExit(); // Удаляем файл после завершения тестов
 
         // Создаём менеджер с пустым состоянием
@@ -32,14 +32,14 @@ class FileBackedTaskManagerTest {
 
     @Test
     void testSaveAndLoadWithTasks() throws IOException {
-        File tempFile = File.createTempFile("testTasks", ".csv");
+        File tempFile = File.createTempFile("tasks2", ".txt");
         tempFile.deleteOnExit();
 
         // Создаём менеджер и добавляем задачи
         FileBackedTaskManager manager = new FileBackedTaskManager(tempFile);
-        Task task = new Task("Tasks.Task 1", "Description 1");
-        Epic epic = new Epic("Tasks.Epic 1", "Description Tasks.Epic 1");
-        Subtask subtask = new Subtask("Tasks.Subtask 1", "Description Tasks.Subtask 1", 2);
+        Task task = new Task("Task 1", "Description Task 1");
+        Epic epic = new Epic("Epic 1", "Description Epic 1");
+        Subtask subtask = new Subtask("Subtask 1", "Description Subtask 1", 2);
 
         int taskId = manager.createTask(task);
         int epicId = manager.createEpic(epic);
@@ -69,16 +69,16 @@ class FileBackedTaskManagerTest {
 
     @Test
     void testSaveAndLoadMultipleTasks() throws IOException {
-        File tempFile = File.createTempFile("testMultipleTasks", ".csv");
+        File tempFile = File.createTempFile("tasks3", ".txt");
         tempFile.deleteOnExit();
 
         // Создаём менеджер и добавляем несколько задач
         FileBackedTaskManager manager = new FileBackedTaskManager(tempFile);
-        Task task1 = new Task("Tasks.Task 1", "Description 1");
-        Task task2 = new Task("Tasks.Task 2", "Description 2");
-        Epic epic1 = new Epic("Tasks.Epic 1", "Description Tasks.Epic 1");
-        Epic epic2 = new Epic("Tasks.Epic 2", "Description Tasks.Epic 2");
-        Subtask subtask1 = new Subtask("Tasks.Subtask 1", "Description Tasks.Subtask 1", 3);
+        Task task1 = new Task("Task 1", "Description Task 1");
+        Task task2 = new Task("Task 2", "Description Task 2");
+        Epic epic1 = new Epic("Epic 1", "Description Epic 1");
+        Epic epic2 = new Epic("Epic 2", "Description Epic 2");
+        Subtask subtask1 = new Subtask("Subtask 1", "Description Subtask 1", 3);
 
         manager.createTask(task1);
         manager.createTask(task2);
