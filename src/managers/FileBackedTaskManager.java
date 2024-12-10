@@ -97,52 +97,46 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (FileWriter writer = new FileWriter(file)) {
             writer.write("id,type,name,status,description,epic\n");
             for (Task task : getAllTasks()) {
-                writer.write(toString(task));
+                writer.write(toString(task) + "\n");
             }
-
             for (Subtask subtask : getAllSubtasks()) {
-                writer.write(toString(subtask));
+                writer.write(toString(subtask) + "\n");
             }
-
             for (Epic epic : getAllEpics()) {
-                writer.write(toString(epic));
+                writer.write(toString(epic) + "\n");
             }
-
-        } catch (ManagerSaveException | IOException e) {
+        } catch (IOException e) {
             throw new ManagerSaveException("Ошибка сохранения в файл: ", e);
         }
     }
 
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
-        int maxId;
+        int maxId = 0;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-            maxId = 0;
+            reader.readLine(); // Пропускаем заголовок
             while ((line = reader.readLine()) != null) {
-                if (!line.startsWith("id,type,name,status,description,epic")) {
+                if (!line.isBlank()) {
                     Task task = fromString(line);
                     maxId = Math.max(maxId, task.getId());
 
-                    switch (task.getType()) {
-                        case TaskType.TASK:
-                            manager.tasks.put(task.getId(), task);
-                            break;
-                        case TaskType.EPIC:
-                            manager.epics.put(task.getId(), (Epic) task);
-                            break;
-                        case TaskType.SUBTASK:
-                            manager.subtasks.put(task.getId(), (Subtask) task);
-                            break;
+                    if (task instanceof Subtask) {
+                        manager.createSubtask((Subtask) task);
+                    } else if (task instanceof Epic) {
+                        manager.createEpic((Epic) task);
+                    } else {
+                        manager.createTask(task);
                     }
                 }
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки из файла: ", e);
         }
+
         manager.generatorId = maxId + 1;
-        return manager; // Возвращаем восстановленный менеджер
+        return manager;
     }
 
     public String toString(Task task) {
