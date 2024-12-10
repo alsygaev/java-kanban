@@ -1,32 +1,37 @@
-import java.io.IOException;
+package Managers;
+
+import Tasks.Epic;
+import Tasks.Subtask;
+import Tasks.Task;
+import Tasks.TaskStatus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-public class InMemoryTaskManager implements TaskManager, HistoryManager {
+public class InMemoryTaskManager implements TaskManager {
 
-    private InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+    private final InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
-    Map<Integer, Task> tasks = new HashMap<>();
-    Map<Integer, Subtask> subtasks = new HashMap<>();
-    Map<Integer, Epic> epics = new HashMap<>();
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Subtask> subtasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
 
-    private int generatorId = 1;
+    int generatorId = 1;
 
-    //Create Task
+    //Create Tasks.Task
     @Override
-    public int createTask(Task task) throws IOException {
+    public int createTask(Task task) {
         int id = generatorId++;
         task.setId(id);
         tasks.put(id, task);
         return id;
     }
 
-    //Create Subtask
+    //Create Tasks.Subtask
     @Override
-    public int createSubtask(Subtask subtask) throws IOException {
+    public int createSubtask(Subtask subtask) {
         int id = generatorId++;
         if (epics.containsKey(subtask.getEpicId())) {
             subtask.setId(id);
@@ -38,9 +43,9 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
         }
     }
 
-    //Create Epic
+    //Create Tasks.Epic
     @Override
-    public int createEpic(Epic epic) throws IOException {
+    public int createEpic(Epic epic)  {
         int id = generatorId++;
         epic.setId(id);
         epics.put(id, epic);
@@ -51,16 +56,15 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
     //Get all tasks
     @Override
     public List<Task> getAllTasks() {
-        return new ArrayList<>(this.tasks.values());
+        return new ArrayList<>(tasks.values());
     }
 
     //Get task by Id
     @Override
     public Task getTaskById(int id) {
-
-        historyManager.addToHistory(tasks.get(id));
-
-        return tasks.get(id);
+        Task task = tasks.get(id);
+        historyManager.addToHistory(task);
+        return task;
     }
 
     //Get all subtasks
@@ -228,14 +232,4 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
         epics.values().stream().forEach(task -> task.setStatus(TaskStatus.NEW));
     }
 
-
-    @Override
-    public void addToHistory(Task task) {
-        historyManager.addToHistory(task);
-    }
-
-    @Override
-    public void removeFromHistory(int id) {
-
-    }
 }

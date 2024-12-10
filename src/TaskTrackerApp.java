@@ -1,3 +1,9 @@
+import Managers.InMemoryTaskManager;
+import Managers.TaskManager;
+import Tasks.Epic;
+import Tasks.Subtask;
+import Tasks.Task;
+
 import java.io.IOException;
 
 public class TaskTrackerApp {
@@ -6,23 +12,23 @@ public class TaskTrackerApp {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         // Создаем две задачи
-        Task task1 = new Task("Task 1", "Description Task 1");
-        Task task2 = new Task("Task 2", "Description Task 2");
+        Task task1 = new Task("Tasks.Task 1", "Description Tasks.Task 1");
+        Task task2 = new Task("Tasks.Task 2", "Description Tasks.Task 2");
         int task1Id = taskManager.createTask(task1);
         int task2Id = taskManager.createTask(task2);
 
         // Создаем эпик с тремя подзадачами
-        Epic epicWithSubtasks = new Epic("Epic with Subtasks", "Description Epic with Subtasks");
+        Epic epicWithSubtasks = new Epic("Tasks.Epic with Subtasks", "Description Tasks.Epic with Subtasks");
         int epicWithSubtasksId = taskManager.createEpic(epicWithSubtasks);
-        Subtask subtask1 = new Subtask("Subtask 1", "Description Subtask 1", epicWithSubtasksId);
-        Subtask subtask2 = new Subtask("Subtask 2", "Description Subtask 2", epicWithSubtasksId);
-        Subtask subtask3 = new Subtask("Subtask 3", "Description Subtask 3", epicWithSubtasksId);
+        Subtask subtask1 = new Subtask("Tasks.Subtask 1", "Description Tasks.Subtask 1", epicWithSubtasksId);
+        Subtask subtask2 = new Subtask("Tasks.Subtask 2", "Description Tasks.Subtask 2", epicWithSubtasksId);
+        Subtask subtask3 = new Subtask("Tasks.Subtask 3", "Description Tasks.Subtask 3", epicWithSubtasksId);
         taskManager.createSubtask(subtask1);
         taskManager.createSubtask(subtask2);
         taskManager.createSubtask(subtask3);
 
         // Создаем эпик без подзадач
-        Epic epicWithoutSubtasks = new Epic("Epic without Subtasks", "Description of empty epic");
+        Epic epicWithoutSubtasks = new Epic("Tasks.Epic without Subtasks", "Description of empty epic");
         int epicWithoutSubtasksId = taskManager.createEpic(epicWithoutSubtasks);
 
         // Запрашиваем созданные задачи в разном порядке и выводим историю

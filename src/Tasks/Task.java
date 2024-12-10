@@ -1,4 +1,4 @@
-//Базовый класс для Subtask и Epic.
+package Tasks;//Базовый класс для Tasks.Subtask и Tasks.Epic.
 //Существует сам по себе.
 
 public class Task {
@@ -53,7 +53,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "Tasks.Task{" +
                 "id=" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

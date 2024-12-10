@@ -1,5 +1,7 @@
+package Managers;
+
+import Tasks.*;
 import java.io.*;
-import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     public File file;
@@ -9,21 +11,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public int createTask(Task task) throws IOException {
+    public int createTask(Task task) {
         int id = super.createTask(task);
         save();
         return id;
     }
 
     @Override
-    public int createSubtask(Subtask subtask) throws IOException {
+    public int createSubtask(Subtask subtask) {
         int id = super.createSubtask(subtask);
         save();
         return id;
     }
 
     @Override
-    public int createEpic(Epic epic) throws IOException {
+    public int createEpic(Epic epic) {
         int id = super.createEpic(epic);
         save();
         return id;
@@ -91,7 +93,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
 
-    void save() {
+    public void save() {
         try(FileWriter writer = new FileWriter(file)) {
             writer.write("id,type,name,status,description,epic\n");
             for (Task task : getAllTasks()) {
@@ -113,22 +115,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        int maxId;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-
+            maxId = 0;
             while ((line = reader.readLine()) != null) {
                 if (!line.startsWith("id,type,name,status,description,epic")) {
                     Task task = fromString(line);
+                    maxId = Math.max(maxId, task.getId());
 
                     switch (task.getType()) {
-                        case TASK:
+                        case TaskType.TASK:
                             manager.tasks.put(task.getId(), task);
                             break;
-                        case EPIC:
+                        case TaskType.EPIC:
                             manager.epics.put(task.getId(), (Epic) task);
                             break;
-                        case SUBTASK:
+                        case TaskType.SUBTASK:
                             manager.subtasks.put(task.getId(), (Subtask) task);
                             break;
                     }
@@ -137,7 +141,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки из файла: ", e);
         }
-
+        manager.generatorId = maxId + 1;
         return manager; // Возвращаем восстановленный менеджер
     }
 
@@ -194,46 +198,4 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return task;
     }
 
-    public static void main(String[] args) throws IOException {
-        // Файл для хранения данных
-        File file = new File("tasks.txt");
-
-        // Создаём первый менеджер и добавляем задачи
-        FileBackedTaskManager manager = new FileBackedTaskManager(file);
-
-        // Добавляем задачи, эпики и подзадачи
-        Task task1 = new Task("Task 1", "Description Task 1");
-        Task task2 = new Task("Task 2", "Description Task 2");
-        int task1Id = manager.createTask(task1);
-        int task2Id = manager.createTask(task2);
-
-        Epic epic1 = new Epic("Epic 1", "Description Epic 1");
-        int epic1Id = manager.createEpic(epic1);
-
-        Subtask subtask1 = new Subtask("Subtask 1", "Description Subtask 1", epic1Id);
-        Subtask subtask2 = new Subtask("Subtask 2", "Description Subtask 2", epic1Id);
-        manager.createSubtask(subtask1);
-        manager.createSubtask(subtask2);
-
-        // Вывод всех задач в старом менеджере
-        System.out.println("Tasks в старом менеджере:");
-        System.out.println("Tasks: " + manager.getAllTasks());
-        System.out.println("Epics: " + manager.getAllEpics());
-        System.out.println("Subtasks: " + manager.getAllSubtasks());
-
-        // Создаём новый менеджер из того же файла
-        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
-
-        // Вывод всех задач в новом менеджере
-        System.out.println("\nTasks в новом менеджере:");
-        System.out.println("Tasks: " + loadedManager.getAllTasks());
-        System.out.println("Epics: " + loadedManager.getAllEpics());
-        System.out.println("Subtasks: " + loadedManager.getAllSubtasks());
-
-        // Проверка, что данные совпадают
-        System.out.println("\nРезультат проверки:");
-        System.out.println("Tasks совпали?: " + manager.getAllTasks().equals(loadedManager.getAllTasks()));
-        System.out.println("Epics совпали?: " + manager.getAllEpics().equals(loadedManager.getAllEpics()));
-        System.out.println("Subtasks совпали?: " + manager.getAllSubtasks().equals(loadedManager.getAllSubtasks()));
-    }
 }

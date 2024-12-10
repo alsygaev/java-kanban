@@ -1,3 +1,5 @@
+package Tasks;
+
 public class Epic extends Task {
     public TaskType taskType = TaskType.EPIC;
 
@@ -31,7 +33,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" +
+        return "Tasks.Epic{" +
                 "id=" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

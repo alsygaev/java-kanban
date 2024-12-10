@@ -1,8 +1,9 @@
+import Managers.InMemoryHistoryManager;
+import Managers.InMemoryTaskManager;
+import Tasks.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
@@ -18,13 +19,13 @@ class InMemoryHistoryManagerTest {
         historyManager = new InMemoryHistoryManager();
         taskManager = new InMemoryTaskManager();
 
-        task1 = new Task("Task 1", "Task 1 Description");
+        task1 = new Task("Tasks.Task 1", "Tasks.Task 1 Description");
         taskManager.createTask(task1);
 
-        task2 = new Task("Task 2", "Task 2 Description");
+        task2 = new Task("Tasks.Task 2", "Tasks.Task 2 Description");
         taskManager.createTask(task2);
 
-        task3 = new Task("Task 3", "Task 3 Description");
+        task3 = new Task("Tasks.Task 3", "Tasks.Task 3 Description");
         taskManager.createTask(task3);
 
     }
@@ -39,9 +40,9 @@ class InMemoryHistoryManagerTest {
 
         assertNotNull(history, "История не пустая.");
         assertEquals(3, history.size(), "История  должна содержать 3 задачи");
-        assertEquals(task1, history.get(0), "Первая задача - Task 1");
-        assertEquals(task2, history.get(1), "Первая задача - Task 2");
-        assertEquals(task3, history.get(2), "Первая задача - Task 3");
+        assertEquals(task1, history.get(0), "Первая задача - Tasks.Task 1");
+        assertEquals(task2, history.get(1), "Первая задача - Tasks.Task 2");
+        assertEquals(task3, history.get(2), "Первая задача - Tasks.Task 3");
     }
 
     @Test
@@ -53,8 +54,8 @@ class InMemoryHistoryManagerTest {
         final List<Task> history = historyManager.getHistory();
 
         assertEquals(2, history.size(), "История  не должна содержать дубликаты");
-        assertEquals(task2, history.get(0), "Первая задача - Task 2 после попытки добавить дубликат");
-        assertEquals(task1, history.get(1), "Первая задача - Task 1");
+        assertEquals(task2, history.get(0), "Первая задача - Tasks.Task 2 после попытки добавить дубликат");
+        assertEquals(task1, history.get(1), "Первая задача - Tasks.Task 1");
     }
 
     @Test
@@ -68,7 +69,7 @@ class InMemoryHistoryManagerTest {
         final List<Task> history = historyManager.getHistory();
 
         assertEquals(2, history.size(), "История  должна содержать 2 задачи");
-        assertFalse(history.contains(task3), "История не должна содержать Task 3");
+        assertFalse(history.contains(task3), "История не должна содержать Tasks.Task 3");
     }
 
 }

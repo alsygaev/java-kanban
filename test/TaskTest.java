@@ -1,6 +1,7 @@
+import Tasks.Task;
+import Tasks.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class TaskTest {
@@ -8,12 +9,12 @@ class TaskTest {
     private Task task;
     @BeforeEach
     void setUp() {
-        task = new Task("this is Task", "task description");
+        task = new Task("this is Tasks.Task", "task description");
     }
 
     @Test
     void getName() {
-        assertEquals("this is Task", task.getName());
+        assertEquals("this is Tasks.Task", task.getName());
     }
 
     @Test
@@ -46,7 +47,7 @@ class TaskTest {
 
     @Test
     void testToString() {
-        String str = "Task{id=0', name='this is task', description='task description', status=NEW}";
+        String str = "Tasks.Task{id=0', name='this is task', description='task description', status=NEW}";
         assertEquals(task.toString(), task.toString());
     }
 }

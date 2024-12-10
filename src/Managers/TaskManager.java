@@ -1,16 +1,21 @@
-import java.io.IOException;
+package Managers;
+
+import Tasks.Epic;
+import Tasks.Subtask;
+import Tasks.Task;
+
 import java.util.List;
 
 public interface TaskManager {
 
-    // Create Task
-    int createTask(Task task) throws IOException;
+    // Create Tasks.Task
+    int createTask(Task task);
 
-    // Create Subtask
-    int createSubtask(Subtask subtask) throws IOException;
+    // Create Tasks.Subtask
+    int createSubtask(Subtask subtask);
 
-    // Create Epic
-    int createEpic(Epic epic) throws IOException;
+    // Create Tasks.Epic
+    int createEpic(Epic epic);
 
     // Get all tasks
     List<Task> getAllTasks();

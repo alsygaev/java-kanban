@@ -1,6 +1,8 @@
+import Tasks.Epic;
+import Tasks.Subtask;
+import Tasks.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubtaskTest {
@@ -39,7 +41,7 @@ class SubtaskTest {
 
     @Test
     void testToString() {
-        String str = "Subtask{id=0', name='this is subtask', description='subtask description', status=NEW, epicId=0}";
+        String str = "Tasks.Subtask{id=0', name='this is subtask', description='subtask description', status=NEW, epicId=0}";
         assertEquals(str, subtask.toString());
     }
 }

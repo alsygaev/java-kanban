@@ -1,5 +1,8 @@
+import Managers.FileBackedTaskManager;
+import Tasks.Epic;
+import Tasks.Subtask;
+import Tasks.Task;
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -34,9 +37,9 @@ class FileBackedTaskManagerTest {
 
         // Создаём менеджер и добавляем задачи
         FileBackedTaskManager manager = new FileBackedTaskManager(tempFile);
-        Task task = new Task("Task 1", "Description 1");
-        Epic epic = new Epic("Epic 1", "Description Epic 1");
-        Subtask subtask = new Subtask("Subtask 1", "Description Subtask 1", 2);
+        Task task = new Task("Tasks.Task 1", "Description 1");
+        Epic epic = new Epic("Tasks.Epic 1", "Description Tasks.Epic 1");
+        Subtask subtask = new Subtask("Tasks.Subtask 1", "Description Tasks.Subtask 1", 2);
 
         int taskId = manager.createTask(task);
         int epicId = manager.createEpic(epic);
@@ -71,11 +74,11 @@ class FileBackedTaskManagerTest {
 
         // Создаём менеджер и добавляем несколько задач
         FileBackedTaskManager manager = new FileBackedTaskManager(tempFile);
-        Task task1 = new Task("Task 1", "Description 1");
-        Task task2 = new Task("Task 2", "Description 2");
-        Epic epic1 = new Epic("Epic 1", "Description Epic 1");
-        Epic epic2 = new Epic("Epic 2", "Description Epic 2");
-        Subtask subtask1 = new Subtask("Subtask 1", "Description Subtask 1", 3);
+        Task task1 = new Task("Tasks.Task 1", "Description 1");
+        Task task2 = new Task("Tasks.Task 2", "Description 2");
+        Epic epic1 = new Epic("Tasks.Epic 1", "Description Tasks.Epic 1");
+        Epic epic2 = new Epic("Tasks.Epic 2", "Description Tasks.Epic 2");
+        Subtask subtask1 = new Subtask("Tasks.Subtask 1", "Description Tasks.Subtask 1", 3);
 
         manager.createTask(task1);
         manager.createTask(task2);
