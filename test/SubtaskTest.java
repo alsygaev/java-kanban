@@ -12,20 +12,20 @@ class SubtaskTest {
 
     @BeforeEach
     void setUp() {
-        epic = new Epic("this is epic", "epic description");
-        subtask = new Subtask("this is subtask", "subtask description", epic.getId());
+        epic = new Epic("Epic", "Description Epic");
+        subtask = new Subtask("Subtask", "Description Subtask", epic.getId());
     }
 
 
     @Test
     void getDescription() {
-        assertEquals("subtask description", subtask.getDescription());
+        assertEquals("Description Subtask", subtask.getDescription());
     }
 
     @Test
     void setDescription() {
-        subtask.setDescription("new description");
-        assertEquals("new description", subtask.getDescription());
+        subtask.setDescription("New description Subtask");
+        assertEquals("New description Subtask", subtask.getDescription());
     }
 
     @Test
@@ -41,7 +41,7 @@ class SubtaskTest {
 
     @Test
     void testToString() {
-        String str = "Tasks.Subtask{id=0', name='this is subtask', description='subtask description', status=NEW, epicId=0}";
+        String str = "Tasks.Subtask{id=0', name='Subtask', description='Description Subtask', status=NEW, epicId=0, duration=null, startTime=null}";
         assertEquals(str, subtask.toString());
     }
 }

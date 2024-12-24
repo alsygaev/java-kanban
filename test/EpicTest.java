@@ -36,7 +36,7 @@ class EpicTest {
 
     @org.junit.jupiter.api.Test
     void testToString() {
-        String str = "Tasks.Epic{id=0', name='this is epic', description='epic description', status=NEW}";
+        String str = "Tasks.Epic{id=0', name='this is epic', description='epic description', status=NEW, duration=null, startTime=null, endTime=null}";
         assertEquals(str, epic.toString());
     }
 }
