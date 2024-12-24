@@ -6,6 +6,8 @@ import tasks.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -201,5 +203,23 @@ class InMemoryTaskManagerTest {
         Epic updatedEpic = taskManager.getEpicById(epicId);
         assertNotNull(updatedEpic, "Эпик не должен быть удалён.");
         assertTrue(taskManager.getAllSubtasksByEpic(epicId).isEmpty(), "В эпике не должно оставаться подзадач.");
+    }
+
+    @Test
+    void taskTimeSlotValidationTest() {
+        Task task1 = new Task("Task 1", "Description 1");
+        task1.setStartTime(LocalDateTime.now());
+        task1.setDuration(Duration.ofMinutes(60));
+        taskManager.createTask(task1);
+
+        Task task2 = new Task("Task 2", "Description 2");
+        task2.setStartTime(task1.getStartTime().plusMinutes(30));
+        task2.setDuration(Duration.ofMinutes(60));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            taskManager.createTask(task2);
+        });
+
+        assertEquals("The new task is crossing with another task", exception.getMessage());
     }
 }
