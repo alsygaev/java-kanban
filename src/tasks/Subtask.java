@@ -2,7 +2,6 @@ package tasks;
 
 public class Subtask extends Task {
     private int epicId;
-    private TaskType taskType = TaskType.SUBTASK;
 
     public Subtask() {
         this.status = TaskStatus.NEW;

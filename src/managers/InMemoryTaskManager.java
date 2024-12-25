@@ -12,13 +12,13 @@ public class InMemoryTaskManager implements TaskManager {
     private final InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
     private final Map<LocalDateTime, Boolean> timeGrid = new HashMap<>();
 
-    private final TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
+    private final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
 
     protected final Map<Integer, Task> tasks = new HashMap<>();
     protected final Map<Integer, Subtask> subtasks = new HashMap<>();
     protected final Map<Integer, Epic> epics = new HashMap<>();
 
-    int generatorId = 1;
+    protected int generatorId = 1;
 
     // Create Task
     @Override
@@ -286,6 +286,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Subtask subtask : subtaskList) {
             if (subtask.getStatus() == TaskStatus.IN_PROGRESS) {
                 hasInProgress = true;
+                break;
             }
             if (subtask.getStatus() == TaskStatus.NEW) {
                 hasNew = true;

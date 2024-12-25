@@ -1,4 +1,5 @@
-package tasks;//Базовый класс для Tasks.Subtask и Tasks.Epic.
+package tasks;
+//Базовый класс для Tasks.Subtask и Tasks.Epic.
 //Существует сам по себе.
 
 import java.time.Duration;

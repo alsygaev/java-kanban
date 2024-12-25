@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class Epic extends Task {
-    public TaskType taskType = TaskType.EPIC;
 
     public Epic() {
         this.status = TaskStatus.NEW;

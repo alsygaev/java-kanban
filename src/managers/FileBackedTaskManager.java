@@ -141,7 +141,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 .append(task.getName()).append(",")
                 .append(task.getStatus()).append(",")
                 .append(task.getDescription());
-        if (task instanceof Subtask) {
+        if (task.getType() == TaskType.SUBTASK) {
             result.append(",").append(((Subtask) task).getEpicId());
         }
         return result.toString();
