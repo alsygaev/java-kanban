@@ -29,7 +29,6 @@ public class HttpTaskServer {
                 .create();
     }
 
-
     private void configureHandlers() {
         server.createContext("/tasks", new TaskHandler(taskManager));
         server.createContext("/subtasks", new SubtaskHandler(taskManager));
@@ -37,6 +36,7 @@ public class HttpTaskServer {
         server.createContext("/history", new HistoryHandler(taskManager));
         server.createContext("/prioritized", new PrioritizedTasksHandler(taskManager));
     }
+
     public void start() {
         server.start();
         System.out.println("Server started on port " + PORT);
@@ -46,6 +46,5 @@ public class HttpTaskServer {
         server.stop(0);
         System.out.println("Server stopped");
     }
-
 
 }
