@@ -37,9 +37,10 @@ public class EpicHandler extends BaseHttpHandlers {
                 default:
                     sendText(exchange, "Method not allowed", 405);
             }
+        } catch (IllegalArgumentException e) {
+            sendError(exchange, "Time slot is conflict: " + e.getMessage(), 406);
         } catch (Exception e) {
-            e.printStackTrace(); // Логируем ошибку
-            sendError(exchange, "Internal Server Error: " + e.getMessage(), 500);
+            sendError(exchange, "Internal server error: " + e.getMessage(), 500);
         }
     }
 
@@ -95,10 +96,5 @@ public class EpicHandler extends BaseHttpHandlers {
         } else {
             sendNotFound(exchange);
         }
-    }
-
-    private int extractIdFromPath(String path) {
-        String[] parts = path.split("/");
-        return Integer.parseInt(parts[parts.length - 1]);
     }
 }

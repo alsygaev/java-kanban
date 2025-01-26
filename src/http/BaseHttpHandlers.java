@@ -35,5 +35,9 @@ public abstract class BaseHttpHandlers implements HttpHandler {
         sendText(exchange, "Not Found", 404);
     }
 
-    public abstract void handle(HttpExchange exchange) throws IOException;
+    protected int extractIdFromPath(String path) {
+        String[] parts = path.split("/");
+        return Integer.parseInt(parts[parts.length - 1]);
+    }
+
 }

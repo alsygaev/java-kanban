@@ -2,6 +2,7 @@ package http;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import managers.TaskManager;
 import tasks.Task;
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class TaskHandler extends BaseHttpHandlers {
+public class TaskHandler extends BaseHttpHandlers implements HttpHandler {
     private final TaskManager taskManager;
     private final Gson gson;
 
@@ -37,6 +38,8 @@ public class TaskHandler extends BaseHttpHandlers {
                 default:
                     sendText(exchange, "Method not allowed", 405);
             }
+        } catch (IllegalArgumentException e) {
+            sendError(exchange, "Time slot is conflict: " + e.getMessage(), 406);
         } catch (Exception e) {
             sendError(exchange, "Internal server error: " + e.getMessage(), 500);
         }
@@ -103,10 +106,5 @@ public class TaskHandler extends BaseHttpHandlers {
         } else {
             sendNotFound(exchange);
         }
-    }
-
-    private int extractIdFromPath(String path) {
-        String[] parts = path.split("/");
-        return Integer.parseInt(parts[parts.length - 1]);
     }
 }
